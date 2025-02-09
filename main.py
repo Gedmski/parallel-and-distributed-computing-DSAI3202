@@ -2,9 +2,9 @@ import src.sequential as seq
 import src.threading as th
 import src.processes as pr
 
-chars = 100000
-threads_n = 2
-processes_n = 2
+chars = 1000000
+threads_n = 8
+processes_n = 8
 
 sequential_t = seq.testing(chars)
 threading_t = th.testing(chars, threads_n)
@@ -19,12 +19,12 @@ efficiency_threading = speedup_threading / threads_n
 efficiency_processing = speedup_processing / processes_n
 
 # Calculate Ahmdahl's
-ahmdahls_threading = 1 / ((1 - 0.99) + (0.99 / threads_n))
-ahmdahls_processing = 1 / ((1 - 0.99) + (0.99 / processes_n))
+ahmdahls_threading = 1 / ((1 - 0.54) + (0.54 / threads_n))
+ahmdahls_processing = 1 / ((1 - 0.54) + (0.54 / processes_n))
 
 # Calculate Gustafsson's
-gustafssons_threading = threads_n / ((1 - 0.99) + (0.99 / threads_n))
-gustafssons_processing = processes_n / ((1 - 0.99) + (0.99 / processes_n))
+gustafssons_threading = threads_n / ((1 - 0.54) + (0.54 / threads_n))
+gustafssons_processing = processes_n / ((1 - 0.54) + (0.54 / processes_n))
 
 print("------------------------------------------------------------------")
 print(f"Speedup (Threading): {speedup_threading}")
