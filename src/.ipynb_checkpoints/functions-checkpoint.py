@@ -1,13 +1,14 @@
 import random
 import string
 
-def join_random_letters(n):
-    letters = [random.choice(string.ascii_letters) for _ in range(n)]
-    joined_letters = ''.join(letters)
-    return joined_letters
+# def join_random_letters(n):
+#     letters = [random.choice(string.ascii_letters) for _ in range(n)]
+#     joined_letters = ''.join(letters)
+#     return joined_letters
 
-# Function to add a thousand random numbers
-def add_random_numbers(n):
-    numbers = [random.randint(1, 100) for _ in range(n)]
+# Function to take the sum of a range of numbers
+def add_random_numbers(n_start, n_end):
+    numbers = [_ for _ in range(n_start, n_end)]
     total_sum = sum(numbers)
+    print(f"The sum for range ({n_start}, {n_end}) is {total_sum}")
     return total_sum

@@ -19,14 +19,13 @@ efficiency_threading = speedup_threading / threads_n
 efficiency_processing = speedup_processing / processes_n
 
 # Calculate Ahmdahl's
-ahmdahls_threading = 1 / ((1 - 0.54) + (0.54 / threads_n))
-ahmdahls_processing = 1 / ((1 - 0.54) + (0.54 / processes_n))
+ahmdahls_threading = 1 / ((1 - 0.50) + (0.50 / threads_n))
+ahmdahls_processing = 1 / ((1 - 0.50) + (0.50 / processes_n))
 
 # Calculate Gustafsson's
-gustafssons_threading = threads_n / ((1 - 0.54) + (0.54 / threads_n))
-gustafssons_processing = processes_n / ((1 - 0.54) + (0.54 / processes_n))
+gustafssons_threading = threads_n / ((1 - 0.50) + (0.50 / threads_n))
+gustafssons_processing = processes_n / ((1 - 0.50) + (0.50 / processes_n))
 
-print("------------------------------------------------------------------")
 print(f"Speedup (Threading): {speedup_threading}")
 print(f"Speedup (Multiprocessing): {speedup_processing}")
 print("------------------------------------------------------------------")

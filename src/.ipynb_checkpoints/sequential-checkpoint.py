@@ -6,12 +6,12 @@ def testing(chars):
     total_start_time = time.time()
     
     # Run the functions
-    joined_letters = f.join_random_letters(chars)
-    total_sum = f.add_random_numbers(chars)
-    
+    # joined_letters = f.join_random_letters(chars)
+    total_sum = f.add_random_numbers(0, chars)
     total_end_time = time.time()
 
     # Print the results
     print("----- Sequential Results -----")
     print(f"Total time taken: {total_end_time - total_start_time} seconds")
+    print("------------------------------------------------------------------")
     return total_end_time - total_start_time
