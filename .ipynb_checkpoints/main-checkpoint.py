@@ -26,6 +26,7 @@ ahmdahls_processing = 1 / ((1 - 0.99) + (0.99 / processes_n))
 gustafssons_threading = threads_n / ((1 - 0.99) + (0.99 / threads_n))
 gustafssons_processing = processes_n / ((1 - 0.99) + (0.99 / processes_n))
 
+print("------------------------------------------------------------------")
 print(f"Speedup (Threading): {speedup_threading}")
 print(f"Speedup (Multiprocessing): {speedup_processing}")
 print("------------------------------------------------------------------")
