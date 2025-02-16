@@ -7,7 +7,7 @@ def testing(chars):
     
     # Run the functions
     # joined_letters = f.join_random_letters(chars)
-    total_sum = f.add_random_numbers(0, chars)
+    total_sum = f.add_random_numbers(0, chars + 1)
     total_end_time = time.time()
 
     # Print the results

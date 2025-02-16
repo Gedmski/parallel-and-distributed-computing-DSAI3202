@@ -3,8 +3,8 @@ import src.threading as th
 import src.processes as pr
 
 chars = 1000000
-threads_n = 8
-processes_n = 8
+threads_n = 6
+processes_n = 6
 
 sequential_t = seq.testing(chars)
 threading_t = th.testing(chars, threads_n)

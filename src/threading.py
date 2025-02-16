@@ -1,5 +1,6 @@
 import threading
 import time
+from math import ceil
 from queue import Queue
 import src.functions as f
 
@@ -8,12 +9,12 @@ def testing(chars, n_chunks):
     
     total_start_time = time.time()
 
-    chunk = chars // n_chunks
+    chunk = ceil(chars / n_chunks)
     # Create threads for both functions
     threads = []
     for i in range(n_chunks):
         # thread_letters = threading.Thread(target=f.join_random_letters, args=(chunk,))
-        thread_numbers = threading.Thread(target=f.add_random_numbers, args=(chunk*i, chunk*(i+1), partial_sums))
+        thread_numbers = threading.Thread(target=f.add_random_numbers, args=(chunk*i, min(chunk*(i+1), chars + 1), partial_sums))
         # threads.append(thread_letters)
         threads.append(thread_numbers)
         # thread_letters.start()
