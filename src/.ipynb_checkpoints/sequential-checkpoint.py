@@ -1,7 +1,10 @@
 import time
 from sklearn.metrics import mean_absolute_percentage_error
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
+from math import sqrt
 
-def execution():
+def execution(X_train_filled, X_val_filled, y_train, y_val):
     start_time = time.time()
     
     # Define the parameter ranges

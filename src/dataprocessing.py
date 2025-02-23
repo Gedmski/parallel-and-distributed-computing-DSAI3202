@@ -1,10 +1,13 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
+import os
+
+print(os.getcwd())
 
 def prepare():
     # Load the train_dataset
-    file_path = '../data/train.csv'
+    file_path = '/home/student/parallel-and-distributed-computing-DSAI3202/data/train.csv'
     train_data = pd.read_csv(file_path, index_col="Id")
     
     # Columns to be deleted

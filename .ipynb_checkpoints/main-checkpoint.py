@@ -6,9 +6,9 @@ import multiprocessing
 
 X_train_filled, X_val_filled, y_train, y_val = dp.prepare()
 
-sequential_t = seq.testing(X_train_filled, X_val_filled, y_train, y_val)
-threading_t = th.testing(X_train_filled, X_val_filled, y_train, y_val)
-processing_t = pr.testing(X_train_filled, X_val_filled, y_train, y_val)
+sequential_time = seq.execution(X_train_filled, X_val_filled, y_train, y_val)
+threading_time = th.execution(X_train_filled, X_val_filled, y_train, y_val)
+processing_time = pr.execution(X_train_filled, X_val_filled, y_train, y_val)
 
 cpu = multiprocessing.cpu_count()
 
