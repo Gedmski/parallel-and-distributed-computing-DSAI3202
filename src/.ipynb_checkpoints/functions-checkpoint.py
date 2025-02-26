@@ -2,6 +2,8 @@ import threading
 import random
 import time
 import queue
+import sys
+import os
 
 latest_temperatures = {}
 temperature_averages = {}
@@ -37,7 +39,7 @@ def process_temperatures():
             sensor_counts[sensor_id] += 1
             temperature_averages[sensor_id] = round(sensor_data[sensor_id] / sensor_counts[sensor_id], 2)
         
-        time.sleep(5)
+        time.sleep(1)
 
 # Display Logic
 def initialize_display():
@@ -51,9 +53,10 @@ def initialize_display():
 
 def update_display():
     while True:
+        time.sleep(5)
         with lock:
             print("\033[H\033[J", end="")  # Clears console screen
-            print("Current temperatures:")
+            print("\rCurrent temperatures:")
             print("Latest Temperatures:", end=" ")
             for i in range(3):
                 temp = latest_temperatures.get(i, "--")
@@ -62,4 +65,3 @@ def update_display():
             for i in range(3):
                 avg_temp = temperature_averages.get(i, "--")
                 print(f"Sensor {i} Average: {avg_temp}°C")
-        time.sleep(5)
