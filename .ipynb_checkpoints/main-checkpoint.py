@@ -2,11 +2,18 @@ from mpi4py import MPI
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
-
 if rank == 0:
-    data = {"a": 7, "b": 3.14}
-    print(f"Sending data: {data}")
-    comm.send(data, dest=1, tag=11)
-elif rank == 1:
-    data = comm.recv(source=0, tag=11)
-    print(f"On process 1, data received: {data}")
+    # Process 0 sends a non-blocking message to Process 1
+    data_to_send = "Hello from Process 0"
+    request = comm.bcast(data_to_send, dest=1, tag=100)
+    # Process 0 can perform other work here while the send operation completes
+    request.wait() # Wait for the non-blocking send to complete
+    print("Process 0 sent data")
+elif rank > 0:
+    # Process 1 sets up a non-blocking receive from Process 0
+    request = comm.irecv(source=0, tag=100)
+    data_received = request.wait() # Wait for the non-blocking receive to complete
+    # 'status' object contains information about the received message
+    status = request.Get_status()
+    print(f"Process {rank} received data: {data_received}")
+    print("Status of the received message: ", status)
