@@ -6,6 +6,23 @@ import os
 print(os.getcwd())
 
 def prepare():
+    """
+    Loads and preprocesses the housing dataset for training and validation.
+
+    Steps performed:
+    - Loads the dataset from a CSV file.
+    - Drops unnecessary or high-missing-value columns.
+    - Separates input features (X) and target variable (y = SalePrice).
+    - Encodes categorical features using Label Encoding.
+    - Splits the dataset into training and validation sets (70/30 split).
+    - Fills missing values in both training and validation sets with median values.
+
+    Returns:
+    - X_train_filled (pd.DataFrame): Preprocessed training features with no missing values.
+    - X_val_filled (pd.DataFrame): Preprocessed validation features with no missing values.
+    - y_train (pd.Series): Target values for training.
+    - y_val (pd.Series): Target values for validation.
+    """
     # Load the train_dataset
     file_path = '/home/student/parallel-and-distributed-computing-DSAI3202/data/train.csv'
     train_data = pd.read_csv(file_path, index_col="Id")
