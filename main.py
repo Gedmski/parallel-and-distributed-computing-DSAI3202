@@ -1,24 +1,26 @@
 from mpi4py import MPI
 from src.genetic_algorithm_trial import execution as sequential
 from src.genetic_algorithm_parallel import genetic_algorithm_mpi
+from src.genetic_algorithm_extended import genetic_algorithm_extended
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()  # Get the number of processes
 
+# --- Sequential run (only on rank 0) ---
 if rank == 0:
-    # Run sequential execution only on rank 0
     sequential_time = sequential()
-    print(f"Sequential Execution Time: {sequential_time}")
+    print(f"\nSequential Execution Time: {sequential_time:.4f} seconds")
 
-# Synchronize before starting parallel execution
-comm.Barrier()
-
-# Run parallel execution on all ranks
+# --- Parallel GA run ---
+comm.Barrier()  # Synchronize all ranks
 parallel_time = genetic_algorithm_mpi()
+# parallel_total_time = comm.reduce(parallel_time, op=MPI.MAX, root=0)
 
-# Ensure all ranks finish before proceeding
+# --- Extended GA run ---
 comm.Barrier()
+extended_time = genetic_algorithm_extended()
+# extended_total_time = comm.reduce(extended_time, op=MPI.MAX, root=0)
 
 # Compute performance metrics on rank 0
 if rank == 0:

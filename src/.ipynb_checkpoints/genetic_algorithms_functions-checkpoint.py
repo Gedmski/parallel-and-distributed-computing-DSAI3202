@@ -28,7 +28,7 @@ def calculate_fitness(route,
         return 1e6
 
     total_distance += distance_matrix[route[-1], route[0]]
-    return -total_distance
+    return total_distance
 
 def select_in_tournament(population,
                          scores,

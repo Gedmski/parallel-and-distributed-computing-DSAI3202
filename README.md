@@ -17,6 +17,7 @@ The **city layout** is modeled as a **graph** with nodes representing delivery p
 ---
 
 ### Description of the Code
+
 The project consists of the following main files:
 
 - `genetic_algorithms_functions.py` — Implements core components of the GA.
@@ -65,7 +66,12 @@ Other GA operators implemented include:
     - Tracks the best route found.
 4. Prints the final route and total distance.
 
-**Execution time (sequential):** ~11.92 seconds
+---
+
+### Execution Times
+
+- **Sequential Execution Time**: 7.77 seconds  
+- **Parallel Execution Time (2 processes)**: 6.33 seconds  
 
 ---
 
@@ -81,11 +87,14 @@ Other GA operators implemented include:
 - Ensures unique populations per rank using different seeds.
 - Aggregates global best route across all processes.
 
-#### Performance
-- **Speedup**: 1.88x
-- **Efficiency**: 94.17%
-- **Amdahl's Law Speedup**: 1.82
-- **Gustafson's Law Speedup**: 1.90
+#### Performance Metrics
+
+| Metric                      | Value      |
+|----------------------------|------------|
+| Speedup (S)                | 1.23×      |
+| Efficiency (E)             | 61.37%     |
+| Amdahl’s Law Speedup       | 1.82×      |
+| Gustafson’s Law Speedup    | 1.90×      |
 
 ---
 
@@ -105,31 +114,39 @@ Other GA operators implemented include:
 
 ---
 
-### Large-Scale Problem
+### Final Result
 
+#### Sequential Run
+```
+Best Solution: [0, 11, 7, 5, 4, 15, 26, 13, 27, 12, 31, 3, 18, 20, 24, 25, 10, 22, 28, 9, 21, 16, 8, 14, 2, 23, 17, 30, 19, 6, 29, 1]
+Total Distance: 1224.0
+```
+
+
+#### Parallel Run (2 processes)
+```
+Best Route: [0, 2, 17, 25, 10, 7, 9, 11, 24, 20, 18, 5, 30, 27, 16, 22, 4, 28, 26, 29, 1, 21, 14, 6, 3, 15, 13, 19, 12, 31, 8, 23]
+Total Distance: 1252.0
+```
+
+---
+
+### Large-Scale Problem
 #### Extended City Map
-- Successfully ran the algorithm using `city_distances_extended.csv` (100 nodes).
+- Successfully ran the algorithm using city_distances_extended.csv (100 nodes).
 - Algorithm completed in feasible time with valid output.
 
 #### Scaling to Multiple Vehicles
 To support multiple vehicles:
-- Divide the node set into `k` clusters.
+- Divide the node set into k clusters.
 - Assign one vehicle per cluster.
 - Each vehicle solves a TSP within its assigned nodes.
 - Use additional optimization (e.g., k-means, capacity constraints) to balance workload.
 
 ---
 
-### Final Result
-```
-Best Route: [0, 10, 7, 31, 23, 12, 9, 2, 21, 20, 29, 26, 24, 4, 3, 5, 16, 28, 18, 27, 8, 15, 19, 1, 11, 6, 22, 30, 25, 17, 13, 14]
-Total Distance: -2115.0
-Parallel Execution Time: 6.33 seconds
-```
-
----
-
 ### How to Run
+
 ```bash
 # Sequential
 cd src
