@@ -5,6 +5,19 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 def train_and_evaluate(model, model_name):
+    """
+    Trains a given classification model and evaluates its performance on a test set.
+
+    Parameters:
+    - model: A scikit-learn compatible classification model with .fit() and .predict() methods.
+    - model_name (str): A string identifier for the model (used in the results DataFrame and print statements).
+
+    Returns:
+    - results_df (pd.DataFrame): A DataFrame containing accuracy, precision, recall, and F1-score for the model.
+    
+    Side Effects:
+    - Prints the confusion matrix for the given model.
+    """
     model.fit(X_train, y_train)  # Train the model
     y_pred = model.predict(X_test)  # Make predictions
 

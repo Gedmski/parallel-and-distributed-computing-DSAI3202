@@ -7,6 +7,23 @@ from skimage.filters import sobel, gabor, hessian, prewitt
 
 # Function to apply all filters to a single image
 def process_single_image(image):
+    """
+    Applies multiple image processing filters to a single grayscale image.
+
+    Filters applied:
+    - Entropy (local texture measure)
+    - Gaussian blur
+    - Sobel edge detection
+    - Gabor filtering
+    - Hessian matrix-based features
+    - Prewitt edge detection
+
+    Parameters:
+    - image (ndarray): A 2D grayscale image.
+
+    Returns:
+    - dict: A dictionary containing the original image and its filtered versions.
+    """
     return {
         'Original': image,
         'Entropy': entropy(image, disk(2)),
@@ -19,6 +36,16 @@ def process_single_image(image):
 
 # Function to process images in parallel
 def process_images_parallel(images, num_workers=mp.cpu_count()):
+    """
+    Applies multiple filters to a list of images in parallel using multiprocessing.
+
+    Parameters:
+    - images (list of ndarray): List of grayscale images to process.
+    - num_workers (int, optional): Number of parallel worker processes to use. Defaults to number of CPU cores.
+
+    Returns:
+    - list of dict: A list where each element is a dictionary of filtered images for a single input image.
+    """
     with mp.Pool(processes=num_workers) as pool:
         processed_images = list(tqdm(pool.imap(process_single_image, images[:]), total=len(images[:])))
     return processed_images
@@ -33,4 +60,4 @@ def execution(yes_images, no_images):
     execution_time_p = end_time - start_time
     print(f"Parallel execution time: {execution_time_p:.2f} seconds")
 
-    return execution_time_p
+    return execution_time_p, yes_inputs, no_inputs

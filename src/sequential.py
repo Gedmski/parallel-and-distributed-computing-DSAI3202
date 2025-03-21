@@ -6,6 +6,23 @@ from scipy import ndimage as nd
 from skimage.filters import sobel, gabor, hessian, prewitt
 
 def process_images(images):
+    """
+    Applies multiple image processing filters to a single grayscale image.
+
+    Filters applied:
+    - Entropy (local texture measure)
+    - Gaussian blur
+    - Sobel edge detection
+    - Gabor filtering
+    - Hessian matrix-based features
+    - Prewitt edge detection
+
+    Parameters:
+    - image (ndarray): A 2D grayscale image.
+
+    Returns:
+    - dict: A dictionary containing the original image and its filtered versions.
+    """
     processed_images = []
     for image in tqdm(images[:]):
         filtered_images = {

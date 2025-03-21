@@ -48,6 +48,17 @@ def compute_glcm_features(image,
 
 # Decompose process by processing only one image at a time
 def process_single_image(filtered_images, tumor_presence, shared_list):
+    """
+    Extracts GLCM features from a single set of filtered images and appends the result to a shared list.
+
+    Parameters:
+    - filtered_images (dict): Dictionary of filtered images (e.g., {'sobel': image1, 'laplacian': image2, ...}).
+    - tumor_presence (int): Label indicating presence (1) or absence (0) of tumor.
+    - shared_list (list): A shared list (typically multiprocessing.Manager().list()) to store results.
+
+    Returns:
+    - None: Appends the computed features as a dictionary to shared_list.
+    """
     glcm_features = {}
     for key, image in filtered_images.items():
         glcm_features.update(compute_glcm_features(image, key))
@@ -56,6 +67,16 @@ def process_single_image(filtered_images, tumor_presence, shared_list):
 
 # Process both inputs at the same time
 def process_images_parallel(yes_inputs, no_inputs):
+    """
+    Processes two sets of images (tumor and non-tumor) in parallel using multiprocessing.
+
+    Parameters:
+    - yes_inputs (list): List of filtered image dictionaries labeled as tumor-present (1).
+    - no_inputs (list): List of filtered image dictionaries labeled as tumor-absent (0).
+
+    Returns:
+    - results (list): List of dictionaries containing extracted features and tumor labels.
+    """
     # Create a process pool
     with mp.Pool(processes=mp.cpu_count()) as pool:
         tasks = [(img, 1, shared_list) for img in yes_inputs] + [(img, 0, shared_list) for img in no_inputs]
