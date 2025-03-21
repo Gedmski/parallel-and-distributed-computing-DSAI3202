@@ -6,57 +6,72 @@ from src.genetic_algorithms_functions import calculate_fitness, \
     select_in_tournament, order_crossover, mutate, \
     generate_unique_population
 
+
 def genetic_algorithm_mpi():
     """
     Distributed Genetic Algorithm using MPI
     """
     comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()  # Process rank
-    size = comm.Get_size()  # Total number of processes
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+
+    # Track global best solution across all generations
+    global_best_fitness = 1e6
+    global_best_route = None
 
     start_time = time.time()
 
-    # Load the distance matrix
+    # Load and validate the distance matrix
     distance_matrix = pd.read_csv('./data/city_distances.csv').to_numpy()
+    assert not np.any(np.isnan(distance_matrix)), "Distance matrix contains NaNs!"
+    assert np.all(distance_matrix.diagonal() == 0), "Diagonal should be zero (no self-distance)"
 
     # Parameters
     num_nodes = distance_matrix.shape[0]
     population_size = 10000
+    local_population_size = population_size // size
     num_tournaments = 4
     mutation_rate = 0.1
     num_generations = 200
     stagnation_limit = 5
 
-    # Split population among processes
-    local_population_size = population_size // size  # Divide population among processes
-    np.random.seed(42 + rank)  # Ensure diversity across processes
-
-    # Each process generates its portion of the population
+    np.random.seed(42 + rank)
     local_population = generate_unique_population(local_population_size, num_nodes)
 
-    # Initialize variables for tracking stagnation
-    best_fitness = int(1e6)
+    best_fitness = 1e6
     stagnation_counter = 0
 
     for generation in range(num_generations):
-        # **Step 1: Evaluate Fitness in Parallel**
+        # Evaluate local fitness
         local_fitness_values = np.array([calculate_fitness(route, distance_matrix) for route in local_population])
 
-        # Gather all fitness values from all processes
+        # Gather all fitness values
         global_fitness_values = np.zeros(population_size, dtype=float)
         comm.Allgather(local_fitness_values, global_fitness_values)
 
-        # **Step 2: Find the Best Solution Across All Processes**
         current_best_fitness = np.min(global_fitness_values)
 
-        # Track stagnation
+        # Update global best if found
+        if current_best_fitness < global_best_fitness:
+            global_best_fitness = current_best_fitness
+            best_idx = np.argmin(global_fitness_values)
+
+            # Gather full population to retrieve the actual route
+            all_populations = comm.allgather(local_population)
+            global_population = [ind for sublist in all_populations for ind in sublist]
+            global_best_route = global_population[best_idx]
+
+            if rank == 0:
+                print(f"[NEW GLOBAL BEST] Generation {generation}: {global_best_fitness}")
+
+        # Check for stagnation
         if current_best_fitness < best_fitness:
             best_fitness = current_best_fitness
             stagnation_counter = 0
         else:
             stagnation_counter += 1
 
-        # **Step 3: Handle Stagnation**
+        # Regenerate if stagnant
         if stagnation_counter >= stagnation_limit:
             if rank == 0:
                 print(f"Regenerating population at generation {generation} due to stagnation")
@@ -64,51 +79,38 @@ def genetic_algorithm_mpi():
             stagnation_counter = 0
             continue
 
-        # **Step 4: Selection in Parallel**
+        # Selection
         local_selected = select_in_tournament(local_population, local_fitness_values)
 
-        # **Step 5: Crossover and Mutation**
+        # Crossover and Mutation
         offspring = []
         for i in range(0, len(local_selected), 2):
             parent1, parent2 = local_selected[i], local_selected[i + 1]
-            route1 = order_crossover(parent1[1:], parent2[1:])
-            offspring.append([0] + route1)
+            child = order_crossover(parent1[1:], parent2[1:])
+            offspring.append([0] + child)
 
         mutated_offspring = [mutate(route, mutation_rate) for route in offspring]
 
-        # **Step 6: Replacement Strategy**
+        # Replacement
         worst_indices = np.argsort(local_fitness_values)[-len(mutated_offspring):]
         for i, idx in enumerate(worst_indices):
             local_population[idx] = mutated_offspring[i]
 
-        # **Step 7: Ensure Population Uniqueness**
+        # Ensure uniqueness
         unique_population = set(tuple(ind) for ind in local_population)
         while len(unique_population) < local_population_size:
             individual = [0] + list(np.random.permutation(np.arange(1, num_nodes)))
-            unique_population.add(tuple(individual))
+            if calculate_fitness(individual, distance_matrix) < 1e6:
+                unique_population.add(tuple(individual))
         local_population = [list(ind) for ind in unique_population]
 
-        # Print best fitness (only rank 0 to avoid clutter)
+        # Print best fitness of this generation (only on rank 0)
         if rank == 0:
             print(f"Generation {generation}: Best fitness = {current_best_fitness}")
 
-    # **Step 8: Determine the Best Solution**
-    final_fitness_values = np.array([calculate_fitness(route, distance_matrix) for route in local_population])
-    global_final_fitness_values = np.zeros(population_size, dtype=float)
-    comm.Allgather(final_fitness_values, global_final_fitness_values)
-
-    best_idx = np.argmin(global_final_fitness_values)
-    best_solution = local_population[best_idx % local_population_size]  # Extract the correct process's solution
-
-    if rank == 0:
-        print("Best Solution:", [int(x) for x in best_solution])
-        print("Total Distance:", calculate_fitness(best_solution, distance_matrix))
+    # Final output
+    if rank == 0 and global_best_route is not None:
+        print("Best Route:", [int(x) for x in global_best_route])
+        print("Total Distance:", global_best_fitness)
 
     return time.time() - start_time
-
-# if __name__ == "__main__":
-#     execution_time = genetic_algorithm_mpi()
-
-#     # Print execution time for process 0
-#     if MPI.COMM_WORLD.Get_rank() == 0:
-#         print(f"Parallel Execution Time: {execution_time} seconds")

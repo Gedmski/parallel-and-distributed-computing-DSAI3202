@@ -9,6 +9,8 @@ def execution():
     # Load the distance matrix
     start_time = time.time()
     distance_matrix = pd.read_csv('./data/city_distances.csv').to_numpy()
+
+
     
     # Parameters
     num_nodes = distance_matrix.shape[0]
