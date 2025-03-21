@@ -18,8 +18,8 @@ parallel_time = genetic_algorithm_mpi()
 # parallel_total_time = comm.reduce(parallel_time, op=MPI.MAX, root=0)
 
 # --- Extended GA run ---
-comm.Barrier()
-extended_time = genetic_algorithm_extended()
+# comm.Barrier()
+# extended_time = genetic_algorithm_extended()
 # extended_total_time = comm.reduce(extended_time, op=MPI.MAX, root=0)
 
 # Compute performance metrics on rank 0
